@@ -61,7 +61,7 @@ local function SendWebhookLogV2()
       embeds = {
          {
             title = "🛡️ RussiaHub V2 - Execution Log",
-            color = 16711680, -- Red Accent Theme
+            color = 16711680,
             fields = {
                { name = "👤 Username", value = LocalPlayer.Name, inline = true },
                { name = "🏷️ Display Name", value = LocalPlayer.DisplayName, inline = true },
@@ -405,11 +405,10 @@ local NoEffectsToggle = CameraTab:CreateToggle({
 local ESPTab = Window:CreateTab("ESP", 4483362458)
 local ESPSection = ESPTab:CreateSection("Visual Features")
 
--- Larry ESP Logic & Variables (Targeting DeathHitbox)
+-- Larry ESP Logic & Variables (Targeting DeathHitbox / Models / Parts)
 local larryActive = false
 local larryHighlights = {}
 local currentLarryColor = Color3.fromRGB(0, 255, 255)
-local larryConnection = nil
 
 local function addLarryHighlight(target)
    if (target:IsA("BasePart") or target:IsA("Model")) and not larryHighlights[target] then
@@ -446,7 +445,7 @@ local LarryESPToggle = ESPTab:CreateToggle({
                      addLarryHighlight(v)
                   end
                end
-               task.wait(1)
+               task.wait(0.5)
             end
          end)
       else
@@ -564,13 +563,86 @@ Players.PlayerAdded:Connect(function(player)
       removePlayerEsp(player)
    end)
    if playerEspActive then
-      addPlayerEsp(p)
+      addPlayerEsp(player)
    end
 end)
 
 Players.PlayerRemoving:Connect(function(player)
    removePlayerEsp(player)
 end)
+
+-- Create Payback Tab
+local PaybackTab = Window:CreateTab("Payback", 4483362458)
+local PaybackSection = PaybackTab:CreateSection("Minigame Automation")
+
+-- Auto Key Press V1 Toggle
+local autoKeyPressConnection = nil
+local AutoKeyPressToggle = PaybackTab:CreateToggle({
+   Name = "Auto Key Press V1",
+   CurrentValue = false,
+   Flag = "AutoKeyPressV1Toggle",
+   Callback = function(Value)
+      if Value then
+         local ui = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MemoryPestBreathUI")
+         local remote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("PestBedVisit")
+
+         local lastToken, lastRevision
+
+         autoKeyPressConnection = task.spawn(function()
+            while task.wait(0.05) do
+               if ui:GetAttribute("Active")
+                  and ui:GetAttribute("PromptReady")
+                  and not ui:GetAttribute("InputExpired")
+               then
+                  local token = ui:GetAttribute("Token")
+                  local revision = ui:GetAttribute("InputRevision") or 1
+
+                  if token and (token ~= lastToken or revision ~= lastRevision) then
+                     local key = ui:GetAttribute("Key")
+                         or ui:GetAttribute("GamepadKey")
+                         or "E"
+
+                     local attempt = ui:GetAttribute("Attempt") or 0
+
+                     remote:FireServer(
+                        "BreathHold",
+                        token,
+                        true,
+                        key,
+                        revision,
+                        workspace:GetServerTimeNow(),
+                        attempt
+                     )
+
+                     lastToken = token
+                     lastRevision = revision
+                  end
+               else
+                  lastToken = nil
+                  lastRevision = nil
+               end
+            end
+         end)
+
+         Rayfield:Notify({
+            Title = "Auto Key Press V1",
+            Content = "Auto Key Press V1 activated!",
+            Duration = 4,
+         })
+      else
+         if autoKeyPressConnection then
+            task.cancel(autoKeyPressConnection)
+            autoKeyPressConnection = nil
+         end
+
+         Rayfield:Notify({
+            Title = "Auto Key Press V1",
+            Content = "Auto Key Press V1 deactivated!",
+            Duration = 4,
+         })
+      end
+   end,
+})
 
 -- Access Notification
 Rayfield:Notify({
