@@ -644,6 +644,63 @@ local AutoKeyPressToggle = PaybackTab:CreateToggle({
    end,
 })
 
+-- Auto Key Press V2 (Simulate) Toggle
+local autoKeyPressV2Connection = nil
+local AutoKeyPressV2Toggle = PaybackTab:CreateToggle({
+   Name = "Auto Key Press V2 (Simulate)",
+   CurrentValue = false,
+   Flag = "AutoKeyPressV2Toggle",
+   Callback = function(Value)
+      if Value then
+         local ui = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MemoryPestBreathUI")
+         local heldKey = nil
+
+         local function releaseHeld()
+            if heldKey and keyrelease then
+               pcall(keyrelease, heldKey)
+            end
+            heldKey = nil
+         end
+
+         autoKeyPressV2Connection = task.spawn(function()
+            while task.wait(0.05) do
+               if ui:GetAttribute("Active") and ui:GetAttribute("PromptReady") then
+                  local keyName = ui:GetAttribute("Key")
+
+                  if keyName and keyName ~= heldKey then
+                     releaseHeld()
+                     heldKey = keyName
+
+                     if keypress then
+                        pcall(keypress, keyName)
+                     end
+                  end
+               else
+                  releaseHeld()
+               end
+            end
+         end)
+
+         Rayfield:Notify({
+            Title = "Auto Key Press V2",
+            Content = "Auto Key Press V2 (Simulate) activated!",
+            Duration = 4,
+         })
+      else
+         if autoKeyPressV2Connection then
+            task.cancel(autoKeyPressV2Connection)
+            autoKeyPressV2Connection = nil
+         end
+
+         Rayfield:Notify({
+            Title = "Auto Key Press V2",
+            Content = "Auto Key Press V2 (Simulate) deactivated!",
+            Duration = 4,
+         })
+      end
+   end,
+})
+
 -- Access Notification
 Rayfield:Notify({
    Title = "Access Granted",
