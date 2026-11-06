@@ -571,6 +571,49 @@ Players.PlayerRemoving:Connect(function(player)
    removePlayerEsp(player)
 end)
 
+-- Create Player Tab
+local PlayerTab = Window:CreateTab("Player", 4483362458)
+local PlayerSection = PlayerTab:CreateSection("Player Modifiers")
+
+-- Infinite Stamina Toggle
+local staminaConnection = nil
+local InfiniteStaminaToggle = PlayerTab:CreateToggle({
+   Name = "Infinite Stamina",
+   CurrentValue = false,
+   Flag = "InfiniteStaminaToggle",
+   Callback = function(Value)
+      if Value then
+         staminaConnection = task.spawn(function()
+            while true do
+               pcall(function()
+                  local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+                  local stamina = character:WaitForChild("Sprint"):WaitForChild("Stam")
+                  stamina.Value = math.huge
+               end)
+               task.wait()
+            end
+         end)
+
+         Rayfield:Notify({
+            Title = "Infinite Stamina",
+            Content = "Infinite stamina activated!",
+            Duration = 4,
+         })
+      else
+         if staminaConnection then
+            task.cancel(staminaConnection)
+            staminaConnection = nil
+         end
+
+         Rayfield:Notify({
+            Title = "Infinite Stamina",
+            Content = "Infinite stamina deactivated!",
+            Duration = 4,
+         })
+      end
+   end,
+})
+
 -- Create Payback Tab
 local PaybackTab = Window:CreateTab("Payback", 4483362458)
 local PaybackSection = PaybackTab:CreateSection("Minigame Automation")
